@@ -1,0 +1,107 @@
+CREATE DATABASE Social_Judge;
+ 
+USE Social_Judge;
+
+CREATE TABLE INSTITUICAO(
+        sigla_instituicao       VARCHAR(15) PRIMARY KEY,
+        nome                    VARCHAR(255) NOT NULL,
+        endereco                VARCHAR(255),
+        site                    VARCHAR(255) NOT NULL
+);
+ 
+CREATE TABLE CATEGORIA(
+        id_categoria            INT AUTO_INCREMENT PRIMARY KEY,
+        nome                    VARCHAR(120) NOT NULL,
+        descricao               VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE ICONE( 
+    icone BLOB,
+    id_icone INT AUTO_INCREMENT PRIMARY KEY
+);
+
+CREATE TABLE CONQUISTA(
+    id_conquista INT AUTO_INCREMENT PRIMARY KEY,
+    descricao BLOB
+);
+
+CREATE TABLE VEREDICTO(
+    id_veredicto INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50),
+    descricao VARCHAR(200)
+);
+
+CREATE TABLE USUARIO(
+        id_usuario              INT AUTO_INCREMENT PRIMARY KEY,
+        email                   VARCHAR(255) NOT NULL,
+        nome                    VARCHAR(255) NOT NULL,
+        senha                   VARCHAR(50) NOT NULL CHECK(CHAR_LENGHT(senha) >= 8),
+        genero                  CHAR(1) CHECK( genero IN ('m', 'f', 'o', 'M', 'F', 'O')),
+        data_nascimento         DATE NOT NULL,
+        experiencia             INT  DEFAULT 0,
+        nivel                   INT  DEFAULT 1,
+        posicao_no_ranking      INT NOT NULL,
+        sigla_instituicao       VARCHAR(15) DEFAULT '-',
+        CONSTRAINT usuario_sigla_instituicao_fk FOREIGN KEY (sigla_instituicao) REFERENCES INSTITUICAO(sigla_instituicao)
+);
+
+CREATE TABLE CONQUISTA_USUARIO(
+    id_usuario INT,
+    id_conquista INT,
+    data_e_hora TIMESTAMP,
+    PRIMARY KEY(id_usuario, id_conquista),
+    CONSTRAINT conquista_usuario_id_fk FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario),
+    CONSTRAINT conquista_usuario_conquista_fk FOREIGN KEY (id_conquista) REFERENCES CONQUISTA(id_conquista)
+);
+
+CREATE TABLE PROBLEMA(
+        id_problema             INT AUTO_INCREMENT PRIMARY KEY,
+        titulo                  VARCHAR(255) NOT NULL,
+        tempo_limite            INT, -- DEFAULT(1)
+        nivel                   INT NOT NULL,
+        descricao               BLOB NOT NULL,
+        exemplo_entrada         BLOB NOT NULL,
+        exemplo_saida           BLOB NOT NULL,
+        input                   BLOB NOT NULL,
+        output                  BLOB NOT NULL,
+        assunto                 VARCHAR(100),
+        id_categoria            INT,
+       
+        CONSTRAINT problema_categoria_id_fk FOREIGN KEY(id_categoria) REFERENCES CATEGORIA(id_categoria)
+);
+ 
+CREATE TABLE SUBMISSAO(
+       
+        id_submissao                    INT AUTO_INCREMENT PRIMARY KEY,
+        id_usuario                      INT,
+        id_problema                     INT,
+        id_veredicto                    INT,
+        tempo_de_execucao               INT NOT NULL,
+        data_e_hora                     TIMESTAMP NOT NULL,
+        linguagem_de_programacao        VARCHAR(50) NOT NULL,
+ 
+        CONSTRAINT submissao_id_usuario_fk FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario),
+        CONSTRAINT submisssao_id_problema_fk FOREIGN KEY (id_problema) REFERENCES PROBLEMA(id_problema),
+        CONSTRAINT submissao_id_veredicto_fk FOREIGN KEY (id_veredicto) REFERENCES VEREDICTO(id_veredicto)
+);
+
+CREATE TABLE ORGULHO(
+    id_usuario INT,
+    #id_orgulho INT AUTO_INCREMENT,
+    descricao VARCHAR (255),
+    id_icone INT,
+    PRIMARY KEY (id_usuario),
+    CONSTRAINT orgulho_usuario_id_fk FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario),
+    CONSTRAINT orgulho_icone_id_fk FOREIGN KEY (id_icone) REFERENCES ICONE(id_icone)
+);
+
+CREATE TABLE INTERACAO(
+    id_usuario1 INT,
+    id_usuario2 INT,
+    #id_interacao INT,
+    data_e_hora TIMESTAMP,
+    descricao  BLOB,
+    PRIMARY KEY(id_usuario1, id_usuario2),
+    CONSTRAINT interacao_usuario1_id_fk FOREIGN KEY (id_usuario1) REFERENCES USUARIO (id_usuario),
+    CONSTRAINT interacao_usuario2_id_fk FOREIGN KEY (id_usuario2) REFERENCES USUARIO (id_usuario)
+);
