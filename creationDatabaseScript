@@ -87,10 +87,10 @@ CREATE TABLE SUBMISSAO(
 
 CREATE TABLE ORGULHO(
     id_usuario INT,
-    #id_orgulho INT AUTO_INCREMENT,
+    id_orgulho INT,
     descricao VARCHAR (255),
     id_icone INT,
-    PRIMARY KEY (id_usuario),
+    PRIMARY KEY (id_usuario, id_orgulho),
     CONSTRAINT orgulho_usuario_id_fk FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario),
     CONSTRAINT orgulho_icone_id_fk FOREIGN KEY (id_icone) REFERENCES ICONE(id_icone)
 );
@@ -98,10 +98,9 @@ CREATE TABLE ORGULHO(
 CREATE TABLE INTERACAO(
     id_usuario1 INT,
     id_usuario2 INT,
-    #id_interacao INT,
     data_e_hora TIMESTAMP,
     descricao  BLOB,
-    PRIMARY KEY(id_usuario1, id_usuario2),
+    PRIMARY KEY(id_usuario1, id_usuario2, data_e_hora),
     CONSTRAINT interacao_usuario1_id_fk FOREIGN KEY (id_usuario1) REFERENCES USUARIO (id_usuario),
     CONSTRAINT interacao_usuario2_id_fk FOREIGN KEY (id_usuario2) REFERENCES USUARIO (id_usuario)
 );
